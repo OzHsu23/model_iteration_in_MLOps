@@ -1,0 +1,12 @@
+{
+    "model": {
+        "wrapper": "torchvision",
+        "yaml_path": "./models/torchvision_model.yaml"
+    },
+    "server": {
+        "port": 8000
+    },
+    "logging": {
+        "log_path": "inference_logs.csv"
+    }
+}

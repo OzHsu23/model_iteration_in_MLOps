@@ -1,0 +1,4 @@
+
+MODEL:
+    NAME: resnet50
+    PRETRAINED: ResNet50_Weights

@@ -1,0 +1,6 @@
+MODEL:
+  PATH: "./models/my_model.pt"
+  PREPROCESS:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  CLASSES: ["cat", "dog", "rabbit", "other"]

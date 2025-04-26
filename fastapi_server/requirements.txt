@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pillow
+pandas
+pyyaml
+pytest
+httpx
+python-multipart
+
+transformers
+
+numpy==1.24.4
