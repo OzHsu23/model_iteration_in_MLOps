@@ -6,7 +6,7 @@
         "img_size": 256,
         "random_seed": 666
     },
-    "classification": {
+    "task": {
         "data": {
             "train_csv": "train.csv",
             "val_csv": "val.csv"

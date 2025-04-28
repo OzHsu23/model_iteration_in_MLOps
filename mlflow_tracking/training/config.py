@@ -21,7 +21,7 @@ class Config:
 
         # Sections
         self.common = config_data.get('common', {})
-        self.task_specific = config_data.get(self.task_type, {})
+        self.task_specific = config_data.get('task', {})
         self.mlflow = config_data.get('mlflow', {})
 
     def get(self, key, default=None):
