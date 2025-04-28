@@ -1,0 +1,29 @@
+{
+    "task_type": "classification",
+    "experiment_name": "efficientnet_classification_exp",
+    "common": {
+        "data_dir": "/data/test_classification/carpet",
+        "img_size": 256,
+        "random_seed": 666
+    },
+    "classification": {
+        "data": {
+            "train_csv": "train.csv",
+            "val_csv": "val.csv"
+        },
+        "model": {
+            "model_name": "efficientnet_b1",
+            "num_classes": 2,
+            "pretrained": true,
+            "weight_path": null
+        },
+        "training": {
+            "batch_size": 4,
+            "num_epochs": 2,
+            "learning_rate": 0.0003
+        }
+    },
+    "mlflow": {
+        "tracking_uri": "/mlflow_tracking/mlruns"
+    }
+}

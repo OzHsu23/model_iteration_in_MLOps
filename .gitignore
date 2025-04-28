@@ -2,7 +2,7 @@
 __pycache__/
 
 *.py[cod]
-.pytest_cache__/
+.pytest_cache/
 
 # VSCode
 .vscode/
@@ -14,7 +14,9 @@ datasets
 
 # Output files
 *.csv
+mlruns/
 
 
 # Dev files
 cmd.txt
+dev_*.py
