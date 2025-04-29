@@ -7,9 +7,12 @@ import platform
 import subprocess
 from mlflow.models import infer_signature
 
+import os
 import cv2
+import json
 import numpy as np
 import torchvision
+import tempfile
 
 class MLflowManager:
     @staticmethod
@@ -92,3 +95,46 @@ class MLflowManager:
             pip_requirements=pip_requirements,
             conda_env=None,
         )
+
+    @staticmethod
+    def log_state_dict(model, artifact_path="model", input_example=None, model_info=None):
+        """Log a PyTorch model's state_dict to MLflow with optional input example and environment info."""
+
+        # Infer model signature (optional, for input/output schema)
+        signature = None
+        if input_example is not None:
+            input_tensor = torch.from_numpy(input_example).float().to(model.device)
+            with torch.no_grad():
+                model.eval()
+                output = model(input_tensor)
+            signature = infer_signature(input_tensor.cpu().numpy(), output.detach().cpu().numpy())
+
+        # Prepare pip requirements
+        pip_requirements = [
+            f"torch=={torch.__version__}",
+            f"torchvision=={torchvision.__version__}",
+            f"mlflow=={mlflow.__version__}",
+            f"opencv-python=={cv2.__version__}",
+            f"numpy=={np.__version__}"
+        ]
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Save state_dict
+            model_path = os.path.join(tmpdir, "model_state_dict.pth")
+            torch.save(model.state_dict(), model_path)
+            mlflow.log_artifact(model_path, artifact_path=artifact_path)
+
+            # Save simple model config (only necessary info)
+            if model_info is None:
+                raise ValueError("model_info must be provided with keys: 'model_name', 'num_classes', 'input_size'")
+            model_config = {
+                "model_name": model_info["model_name"],
+                "num_classes": model_info["num_classes"],
+                "input_size": model_info["input_size"]
+            }
+            config_path = os.path.join(tmpdir, "model_config.json")
+            with open(config_path, "w") as f:
+                json.dump(model_config, f, indent=4)
+            mlflow.log_artifact(config_path, artifact_path=artifact_path)
+
+        mlflow.log_dict({"pip_requirements": pip_requirements}, artifact_file=os.path.join(artifact_path, "requirements.json"))

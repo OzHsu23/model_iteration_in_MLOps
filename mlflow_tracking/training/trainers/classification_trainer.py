@@ -109,12 +109,18 @@ class ClassificationTrainer(BaseTrainer):
                     f"Val Acc: {val_acc:.4f}, "
                     f"LR: {current_lr:.6f}")
 
-            # Save final model
+            # Save final model state dict
             dummy_input = np.random.randn(1, 3, self.settings.img_size, self.settings.img_size).astype(np.float32)
-            MLflowManager.log_model(
+            model_info = {
+                "model_name": self.settings.model_name,
+                "num_classes": self.settings.num_classes,
+                "input_size": self.settings.img_size
+            }
+            MLflowManager.log_state_dict(
                 self.model,
                 artifact_path="model",
-                input_example=dummy_input
+                input_example=dummy_input,
+                model_info=model_info
             )
 
         finally:

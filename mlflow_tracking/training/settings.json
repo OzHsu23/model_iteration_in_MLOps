@@ -1,6 +1,6 @@
 {
     "task_type": "classification",
-    "experiment_name": "efficientnet_classification_exp",
+    "experiment_name": "efficientnet_classification_exp_state",
     "common": {
         "data_dir": "/data/test_classification/carpet",
         "img_size": 256,
