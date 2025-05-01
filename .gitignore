@@ -11,10 +11,16 @@ __pycache__/
 # Data files
 datasets
 
+#Input files
+data/
+
 
 # Output files
 *.csv
 mlruns/
+logs/
+resources/
+weights/
 
 
 # Dev files

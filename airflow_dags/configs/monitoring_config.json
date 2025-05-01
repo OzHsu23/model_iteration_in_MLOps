@@ -1,0 +1,24 @@
+{
+    "monitor": {
+        "threshold": 0.7,
+        "recent_window": 100,
+        "delta": 0.05,
+        "log_path": "resources/inference_logs.csv",
+        "flag_path": "resources/flags/need_retrain.flag"
+    },
+    "extraction": {
+        "inference_image_dir": "data/inference_images",
+        "selected_sample_dir": "data/selected_recent_samples",
+        "selected_sample_zip": "data/selected_recent_samples.zip"
+    },
+    "selection": {
+        "b1_api_url": "http://host.docker.internal:8011/batch_predict",
+        "b2_api_url": "http://host.docker.internal:8012/batch_predict",
+        "confidence_threshold": 0.6
+    },
+    "output": {
+        "train_csv_path": "data/retrain/train.csv",
+        "val_csv_path": "data/retrain/val.csv",
+        "val_ratio": 0.05
+    }
+}

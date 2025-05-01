@@ -1,5 +1,0 @@
-{
-    "model_name": "efficientnet_b1",
-    "num_classes": 2,
-    "input_size": 256
-}

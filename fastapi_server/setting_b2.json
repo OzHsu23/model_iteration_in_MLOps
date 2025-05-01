@@ -1,0 +1,30 @@
+{
+    "task_type": "classification",
+    "model": {
+        "model_type": "torch_mlflow",
+        "run_id": "",
+        "tracking_uri": "",
+        "local_path": "./weights/regnet_y/model_state_dict.pth",
+        "yaml_path": "",
+        "model_name": "regnet_y",
+        "num_classes": 2,
+        "class_names": [
+            "NG",
+            "OK"
+        ],
+        "img_size": 256
+    },
+    "preprocessing": {
+        "resize": 256
+    },
+    "postprocessing": {
+        "type": "default"
+    },
+    "server": {
+        "port": 8000
+    },
+    "logging": {
+        "log_path": "logs/inference_logs_b2.csv",
+        "enable": true
+    }
+}

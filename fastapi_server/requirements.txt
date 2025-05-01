@@ -9,6 +9,5 @@ python-multipart
 
 transformers
 mlflow
-
-
 numpy==1.24.4
+opencv-python-headless

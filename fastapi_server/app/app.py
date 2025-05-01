@@ -1,7 +1,10 @@
 # app/app.py
 
-
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import argparse
 from uuid import uuid4
 from datetime import datetime
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
@@ -17,11 +20,18 @@ from app.app_utils import (
 from app.schemas import AppSettings
 from factory.model_factory import ModelFactory
 
+setting_path = os.getenv("SETTING_PATH")
+
+# Check if setting file exists
+if not os.path.exists(setting_path):
+    raise FileNotFoundError(f"Setting file not found: {setting_path}")
+
+
 # Initialize FastAPI app
 app = FastAPI(title="Inference Server", version="1.0.0")
 
 # Load settings and initialize model
-settings_dict = load_setting_json()
+settings_dict = load_setting_json(path=setting_path)
 settings = AppSettings(**settings_dict)
 model_wrapper = ModelFactory.create_model(settings)
 app.state.model = model_wrapper

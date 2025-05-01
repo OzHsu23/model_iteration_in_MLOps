@@ -15,7 +15,7 @@ from fastapi import HTTPException
 from app.schemas import LogRecord
 
 # ---------- Config Loading Functions ----------
-def load_setting_json(path="setting.json"):
+def load_setting_json(path):
     if os.path.exists(path):
         with open(path, "r") as f:
             return json.load(f)

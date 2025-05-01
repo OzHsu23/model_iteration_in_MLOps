@@ -1,9 +1,0 @@
-{
-  "pip_requirements": [
-    "torch==2.1.2+cu121",
-    "torchvision==0.16.2+cu121",
-    "mlflow==2.22.0",
-    "opencv-python==4.11.0",
-    "numpy==1.24.4"
-  ]
-}

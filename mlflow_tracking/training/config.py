@@ -1,13 +1,15 @@
-# training/config.py
 import json
 import os
 
-import json
-
 class Config:
-    def __init__(self, config_path):
-        with open(config_path, 'r') as f:
-            config_data = json.load(f)
+    def __init__(self, config_input):
+        if isinstance(config_input, dict):
+            config_data = config_input
+        elif isinstance(config_input, str):
+            with open(config_input, 'r') as f:
+                config_data = json.load(f)
+        else:
+            raise TypeError("Config expects a dict or path string")
 
         self.config_data = config_data
 
@@ -53,4 +55,3 @@ class Config:
 
     def info(self):
         return json.dumps(self.config_data, indent=4)
-
