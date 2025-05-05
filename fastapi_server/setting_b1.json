@@ -24,7 +24,7 @@
         "port": 8000
     },
     "logging": {
-        "log_path": "logs/inference_logs_b1.csv",
+        "log_path": "logs/inference_logs_8011.csv",
         "enable": true
     }
 }

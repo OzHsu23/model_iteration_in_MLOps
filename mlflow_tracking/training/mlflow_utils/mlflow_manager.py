@@ -19,7 +19,6 @@ class MLflowManager:
     def safe_start_run(experiment_name=None, run_name=None, nested=False):
         """Safely start a new MLflow run, ending any existing one."""
         if mlflow.active_run() is not None:
-            print('Oz Ending existing run...')
             mlflow.end_run()
         if experiment_name:
             mlflow.set_experiment(experiment_name)

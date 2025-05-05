@@ -10,7 +10,7 @@ class ClassificationSettings:
     data_dir: str
     img_size: int
     seed: int
-    
+
     # Data settings
     train_csv: str
     val_csv: str
@@ -33,6 +33,9 @@ class ClassificationSettings:
 
     device: torch.device
 
+    # Job tracking
+    job_id: Optional[str] = None  
+
     @classmethod
     def from_config(cls, config):
         img_size = config.get_common_param("img_size", 256)
@@ -53,4 +56,5 @@ class ClassificationSettings:
             experiment_name=config.get("experiment_name", "Classification_Experiment"),
             tracking_uri=config.get_mlflow_param("tracking_uri"),
             device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+            job_id=config.get("job_id", None) 
         )

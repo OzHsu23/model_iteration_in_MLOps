@@ -20,7 +20,8 @@ RUN pip install --no-cache-dir -r /mlflow_tracking/requirements.txt
 # Copy source code
 COPY . /mlflow_tracking
 
-CMD ["/bin/bash"]
 
 
-# CMD ["python", "training/train.py", "--config", "training/settings.json"]
+# CMD ["/bin/bash"]
+
+CMD ["python",  "run_app.py"]

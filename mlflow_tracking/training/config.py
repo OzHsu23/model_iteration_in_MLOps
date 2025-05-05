@@ -21,10 +21,11 @@ class Config:
         # Experiment name
         self.experiment_name = config_data.get('experiment_name', f"{self.task_type}_default_exp")
 
-        # Sections
+        # Common and MLflow section
         self.common = config_data.get('common', {})
-        self.task_specific = config_data.get('task', {})
         self.mlflow = config_data.get('mlflow', {})
+        
+        self.task_specific = config_data.get('task', {})
 
     def get(self, key, default=None):
         return self.config_data.get(key, default)

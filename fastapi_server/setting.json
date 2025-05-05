@@ -21,10 +21,10 @@
         "type": "default"
     },
     "server": {
-        "port": 8000
+        "port": 8010
     },
     "logging": {
-        "log_path": "logs/inference_logs.csv",
+        "log_path": "logs/inference_logs_8010.csv",
         "enable": true
     }
 }

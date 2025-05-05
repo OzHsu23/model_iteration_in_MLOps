@@ -2,10 +2,8 @@
 
 import torch
 import mlflow
-import torchvision
 import numpy as np
 from torch.utils.data import DataLoader
-
 
 from training.utils.common import get_device
 from training.trainers.base_trainer import BaseTrainer
@@ -13,9 +11,11 @@ from training.model_zoo.classifier_model import SimpleClassifier
 from training.utils.classification_utils import compute_accuracy
 from training.datasets.classification_dataset import ClassificationDataset
 from training.utils.preprocessing import TrainAugmentation, ValAugmentation
-
 from training.mlflow_utils.mlflow_manager import MLflowManager
 from training.trainers.classification_settings import ClassificationSettings
+
+
+from training.globals import job_progress, save_job_status
 
 
 class ClassificationTrainer(BaseTrainer):
@@ -28,13 +28,13 @@ class ClassificationTrainer(BaseTrainer):
         if settings.tracking_uri:
             mlflow.set_tracking_uri(settings.tracking_uri)
 
+        # Initialize datasets and dataloaders
         self.train_dataset = ClassificationDataset(
             split='train', settings=settings, transform=TrainAugmentation(settings)
         )
         self.val_dataset = ClassificationDataset(
             split='val', settings=settings, transform=ValAugmentation(settings)
         )
-
         self.train_loader = DataLoader(self.train_dataset, batch_size=settings.batch_size, shuffle=True)
         self.val_loader = DataLoader(self.val_dataset, batch_size=settings.batch_size, shuffle=False)
 
@@ -44,22 +44,16 @@ class ClassificationTrainer(BaseTrainer):
             pretrained=settings.pretrained,
             weight_path=settings.weight_path,
             input_size=settings.input_size,
-            device = self.device
+            device=self.device
         ).to(self.device)
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=settings.learning_rate)
         self.criterion = torch.nn.CrossEntropyLoss()
-        
-
-    def get_current_lr(self):
-        lrs = [param_group['lr'] for param_group in self.optimizer.param_groups]
-        return lrs[0] if len(lrs) == 1 else lrs
 
     def train(self):
         try:
+            # Start MLflow experiment logging
             MLflowManager.safe_start_run(experiment_name=self.settings.experiment_name)
-
-            # Auto-log environment info + config
             MLflowManager.log_environment()
             MLflowManager.log_config({
                 "batch_size": self.settings.batch_size,
@@ -93,23 +87,39 @@ class ClassificationTrainer(BaseTrainer):
 
                 avg_train_loss = total_loss / len(self.train_loader)
                 train_acc = correct / total
-                val_acc = self.validate()
-                current_lr = self.get_current_lr()
+
+                val_loss, val_acc = self.validate(return_loss=True)
+
+                # Update job progress in global store
+                job_progress[self.settings.job_id] = {
+                    "current_epoch": epoch + 1,
+                    "total_epoch": self.settings.num_epochs,
+                    "train_loss": avg_train_loss,
+                    "val_loss": val_loss,
+                    "train_accuracy": train_acc,
+                    "val_accuracy": val_acc,
+                    "finished": (epoch + 1 == self.settings.num_epochs)
+                }
+                save_job_status()
 
                 MLflowManager.log_metrics_from_dict({
                     "train_loss": avg_train_loss,
+                    "val_loss": val_loss,
                     "train_accuracy": train_acc,
                     "val_accuracy": val_acc,
-                    "learning_rate": current_lr,
                 }, step=epoch)
 
                 print(f"Epoch [{epoch+1}/{self.settings.num_epochs}], "
                     f"Train Loss: {avg_train_loss:.4f}, "
+                    f"Val Loss: {val_loss:.4f}, "
                     f"Train Acc: {train_acc:.4f}, "
-                    f"Val Acc: {val_acc:.4f}, "
-                    f"LR: {current_lr:.6f}")
+                    f"Val Acc: {val_acc:.4f}")
 
-            # Save final model state dict
+            # Final update to mark training complete
+            job_progress[self.settings.job_id]["finished"] = True
+            save_job_status()
+
+            # Log model checkpoint to MLflow
             dummy_input = np.random.randn(1, 3, self.settings.img_size, self.settings.img_size).astype(np.float32)
             model_info = {
                 "model_name": self.settings.model_name,
@@ -122,21 +132,32 @@ class ClassificationTrainer(BaseTrainer):
                 input_example=dummy_input,
                 model_info=model_info
             )
-
         finally:
             MLflowManager.safe_end_run()
 
-    def validate(self):
+    def validate(self, return_loss=False):
         self.model.eval()
         correct = 0
         total = 0
+        total_loss = 0
         with torch.no_grad():
             for images, labels in self.val_loader:
                 images, labels = images.to(self.device), labels.to(self.device)
                 outputs = self.model(images)
+                loss = self.criterion(outputs, labels)
+                total_loss += loss.item()
+
                 _, predicted = torch.max(outputs, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-        return correct / total
+        acc = correct / total
+        avg_loss = total_loss / len(self.val_loader)
+        return (avg_loss, acc) if return_loss else acc
 
+    def get_metrics(self):
+        # Return progress as final metrics
+        return job_progress.get(self.settings.job_id, {})
+
+    def save_model(self, path):
+        torch.save(self.model.state_dict(), path)
 

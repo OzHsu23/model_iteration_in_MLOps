@@ -1,9 +1,11 @@
 # app/app.py
 
+import io
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+import zipfile
 import argparse
 from uuid import uuid4
 from datetime import datetime
@@ -19,6 +21,8 @@ from app.app_utils import (
 )
 from app.schemas import AppSettings
 from factory.model_factory import ModelFactory
+
+from fastapi.responses import FileResponse
 
 setting_path = os.getenv("SETTING_PATH")
 
@@ -147,3 +151,55 @@ async def server_version():
         "server_title": app.title,
         "deployment_time": datetime.utcnow().isoformat()
     }
+
+@app.post("/deploy_model_zip")
+async def deploy_model_zip(
+    file: UploadFile = File(...),
+    job_id: str = Form(...)
+):
+    """
+    Upload a model zip file and reload model using specified job_id.
+    """
+    try:
+        if not file.filename.endswith(".zip"):
+            raise HTTPException(400, "Uploaded file must be a .zip archive.")
+
+        extract_dir = f"./weights/deployed_model_{job_id}"
+        os.makedirs(extract_dir, exist_ok=True)
+
+        contents = await file.read()
+        with zipfile.ZipFile(io.BytesIO(contents)) as zip_ref:
+            zip_ref.extractall(extract_dir)
+
+        setting_path = os.path.join(extract_dir, "inference_setting.json")
+        if not os.path.exists(setting_path):
+            raise HTTPException(400, "Missing inference_setting.json in the zip package")
+
+        settings_dict = load_setting_json(setting_path)
+        new_settings = AppSettings(**settings_dict)
+
+        model_wrapper = ModelFactory.create_model(new_settings)
+        app.state.model = model_wrapper
+
+        return {
+            "status": "Deployment successful",
+            "model_path": extract_dir,
+            "job_id": job_id
+        }
+
+    except Exception as e:
+        raise HTTPException(500, f"Deployment failed: {str(e)}")
+
+@app.get("/get_logs")
+def get_logs():
+    """
+    Serve the current inference log file as defined in settings.logging.log_path.
+    This endpoint does not require any parameters.
+    """
+    log_path = settings.logging.log_path
+    print(f"[INFO] Returning log file: {log_path}")
+
+    if not os.path.exists(log_path):
+        raise HTTPException(status_code=404, detail=f"Log file not found: {log_path}")
+
+    return FileResponse(log_path, media_type="text/csv", filename=os.path.basename(log_path))

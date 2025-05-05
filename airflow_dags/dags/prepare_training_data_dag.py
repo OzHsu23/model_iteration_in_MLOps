@@ -1,18 +1,23 @@
+# dags/prepare_training_data_dag.py
+
 import os
 import sys
+import json
+from datetime import datetime, timedelta
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.models.param import Param
-from datetime import datetime, timedelta
-import json
 
 from schemas import FullConfig
+from scripts.prepare_training_samples import extract_samples_and_prepare_training_data
+from dags.globals import DEFAULT_MONITORING_CONFIG
 
 default_args = {
     "owner": "airflow",
-    "retries": 1,
+    "retries": 0,
     "retry_delay": timedelta(minutes=5),
 }
 
@@ -25,13 +30,11 @@ with DAG(
     catchup=False,
     tags=["data_preparation"],
     params={
-        "config_path": Param("configs/monitoring_config.json", type="string"),
+        "config_path": Param(DEFAULT_MONITORING_CONFIG, type="string"),
     }
 ) as dag:
 
     def prepare_training_data(**context):
-        from scripts.prepare_training_samples import extract_samples_and_prepare_training_data
-
         config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", context["params"]["config_path"]))
         with open(config_path, "r") as f:
             raw_config = json.load(f)
@@ -48,3 +51,5 @@ with DAG(
         python_callable=prepare_training_data,
         provide_context=True
     )
+    
+    prepare_data_task

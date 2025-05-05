@@ -32,10 +32,10 @@ class TorchClassificationModelWrapper(BaseModelWrapper):
             probs = F.softmax(logits, dim=1)
             conf, idx = probs.max(dim=1)
 
-        label = self._get_label(self.class_names, idx)
+        # label = self._get_label(self.class_names, idx)
 
         return {
-            "label": label,
+            "label": str(idx.item()),
             "confidence": conf.item()
         }
     
