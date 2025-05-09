@@ -113,7 +113,7 @@ async def reload_model():
     Reload the model without restarting the server.
     """
     try:
-        settings_dict = load_setting_json()
+        settings_dict = load_setting_json(setting_path)
         new_settings = AppSettings(**settings_dict)
         model_wrapper = ModelFactory.create_model(new_settings)
         app.state.model = model_wrapper
@@ -160,35 +160,31 @@ async def deploy_model_zip(
     """
     Upload a model zip file and reload model using specified job_id.
     """
-    try:
-        if not file.filename.endswith(".zip"):
-            raise HTTPException(400, "Uploaded file must be a .zip archive.")
+    if file is None or not hasattr(file, "filename") or not file.filename.endswith(".zip"):
+        raise HTTPException(400, "Uploaded file must be a .zip archive.")
 
-        extract_dir = f"./weights/deployed_model_{job_id}"
-        os.makedirs(extract_dir, exist_ok=True)
+    extract_dir = f"./weights/deployed_model_{job_id}"
+    os.makedirs(extract_dir, exist_ok=True)
 
-        contents = await file.read()
-        with zipfile.ZipFile(io.BytesIO(contents)) as zip_ref:
-            zip_ref.extractall(extract_dir)
+    contents = await file.read()
+    with zipfile.ZipFile(io.BytesIO(contents)) as zip_ref:
+        zip_ref.extractall(extract_dir)
 
-        setting_path = os.path.join(extract_dir, "inference_setting.json")
-        if not os.path.exists(setting_path):
-            raise HTTPException(400, "Missing inference_setting.json in the zip package")
+    setting_path = os.path.join(extract_dir, "inference_setting.json")
+    if not os.path.exists(setting_path):
+        raise HTTPException(400, "Missing inference_setting.json in the zip package")
 
-        settings_dict = load_setting_json(setting_path)
-        new_settings = AppSettings(**settings_dict)
+    settings_dict = load_setting_json(setting_path)
+    new_settings = AppSettings(**settings_dict)
 
-        model_wrapper = ModelFactory.create_model(new_settings)
-        app.state.model = model_wrapper
+    model_wrapper = ModelFactory.create_model(new_settings)
+    app.state.model = model_wrapper
 
-        return {
-            "status": "Deployment successful",
-            "model_path": extract_dir,
-            "job_id": job_id
-        }
-
-    except Exception as e:
-        raise HTTPException(500, f"Deployment failed: {str(e)}")
+    return {
+        "status": "Deployment successful",
+        "model_path": extract_dir,
+        "job_id": job_id
+    }
 
 @app.get("/get_logs")
 def get_logs():

@@ -30,6 +30,6 @@
   },
   "deploy": {
     "inference_server_api": "http://host.docker.internal:8010/deploy_model_zip",
-    "job_id_to_deploy": "32f7bf0f-5048-4146-8bb0-e3c7b1311375"
+    "job_id_to_deploy": "7550fbcd-1c01-4692-862e-1c53672afcab"
   }
 }

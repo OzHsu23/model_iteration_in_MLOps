@@ -1,0 +1,30 @@
+{
+    "task_type": "classification",
+    "model": {
+        "model_type": "torch_mlflow",
+        "run_id": "",
+        "tracking_uri": "",
+        "local_path": "./weights/efficientnet_b1/model_state_dict.pth",
+        "yaml_path": "",
+        "model_name": "efficientnet_b1",
+        "num_classes": 2,
+        "class_names": [
+            "NG",
+            "OK"
+        ],
+        "img_size": 256
+    },
+    "preprocessing": {
+        "resize": 256
+    },
+    "postprocessing": {
+        "type": "default"
+    },
+    "server": {
+        "port": 8010
+    },
+    "logging": {
+        "log_path": "logs/inference_logs_8010.csv",
+        "enable": true
+    }
+}

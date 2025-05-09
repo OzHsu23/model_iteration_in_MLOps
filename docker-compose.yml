@@ -1,0 +1,103 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: airflow_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow_postgres_data:/var/lib/postgresql/data
+
+  airflow-webserver:
+    image: apache/airflow:2.7.3
+    container_name: airflow_webserver
+    restart: always
+    depends_on:
+      - postgres
+      - airflow-scheduler
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__FERNET_KEY=aoo11y25N9n22Unlg3mbrDvVnI-opvifopkKvbw5VSA=
+      - AIRFLOW__WEBSERVER__SECRET_KEY=178af3aeb022810a6050ca44aad9fbdf
+      - _PIP_ADDITIONAL_REQUIREMENTS=apache-airflow-providers-postgres scikit-learn
+    volumes:
+      - ./:/opt/airflow
+    ports:
+      - "8080:8080"
+    command: webserver
+    user: "${AIRFLOW_UID:-50000}:0"
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.3
+    container_name: airflow_scheduler
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__FERNET_KEY=aoo11y25N9n22Unlg3mbrDvVnI-opvifopkKvbw5VSA=
+      - AIRFLOW__WEBSERVER__SECRET_KEY=178af3aeb022810a6050ca44aad9fbdf
+      - _PIP_ADDITIONAL_REQUIREMENTS=apache-airflow-providers-postgres scikit-learn
+    volumes:
+      - ./airflow_dags:/opt/airflow
+    command: scheduler
+    user: "${AIRFLOW_UID:-50000}:0"
+
+  fastapi_main:
+    build:
+      context: ./fastapi_server
+      dockerfile: Dockerfile
+    image: mlops_fastapi_server
+    container_name: fastapi_inference_container
+    restart: always
+    ports:
+      - "8010:8000"
+    volumes:
+      - ./fastapi_server:/app
+      - ./datasets:/data
+    command: python run_app.py
+
+  fastapi_b1:
+    build:
+      context: ./fastapi_server
+    image: mlops_fastapi_server
+    container_name: fastapi_inference_container_b1
+    restart: always
+    ports:
+      - "8011:8000"
+    volumes:
+      - ./fastapi_server:/app
+      - ./datasets:/data
+    command: python run_app.py --setting_path=setting_b1.json --port=8000 --host=0.0.0.0
+
+  fastapi_b2:
+    build:
+      context: ./fastapi_server
+    image: mlops_fastapi_server
+    container_name: fastapi_inference_container_b2
+    restart: always
+    ports:
+      - "8012:8000"
+    volumes:
+      - ./fastapi_server:/app
+      - ./datasets:/data
+    command: python run_app.py --setting_path=setting_b2.json --port=8000 --host=0.0.0.0
+
+  mlflow_tracking:
+    build:
+      context: ./mlflow_tracking
+    image: mlops_mlflow_tracking
+    container_name: mlflow_tracking_container
+    restart: always
+    ports:
+      - "8020:8020"
+    volumes:
+      - ./mlflow_tracking:/mlflow_tracking
+      - ./datasets:/data
+
+volumes:
+  airflow_postgres_data:
