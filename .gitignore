@@ -2,7 +2,7 @@
 __pycache__/
 
 *.py[cod]
-.pytest_cache__/
+.pytest_cache/
 
 # VSCode
 .vscode/
@@ -11,10 +11,20 @@ __pycache__/
 # Data files
 datasets
 
+#Input files
+data/
+temp_images/
+
 
 # Output files
 *.csv
+mlruns/
+logs/
+resources/
+weights/
 
 
 # Dev files
 cmd.txt
+dev_*.py
+

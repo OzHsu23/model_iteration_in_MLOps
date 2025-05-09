@@ -1,39 +1,40 @@
 # factory/model_factory.py
 
-from models.torch_wrapper import TorchModelWrapper
-from models.torchvision_wrapper import TorchVisionWrapper
-from fastapi import HTTPException
-import os
-import yaml
-
-import os
-import yaml
-from fastapi import HTTPException
-from models.torch_wrapper import TorchModelWrapper
-from models.torchvision_wrapper import TorchVisionWrapper
-
-def load_model_config_yaml(path):
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            return yaml.safe_load(f)
-    else:
-        raise HTTPException(404, f"{path} not found")
+from app.schemas import AppSettings
+from models.loader import load_model_by_type
+from preprocessors.classification import TorchClassificationPreprocessorCV2
+from models.classification.torch_model_wrapper import TorchClassificationModelWrapper
 
 class ModelFactory:
     @staticmethod
-    def create_model(setting):
-        model_setting = setting.get("model", {})
-        wrapper_type = model_setting.get("wrapper", "torchvision")
-        yaml_path = model_setting.get("yaml_path", None)
+    def create_model(config: AppSettings):
+        """
+        Create model based on config.task and config.model.model_type
+        """
+        task = config.task_type
 
-        if yaml_path is None:
-            raise ValueError("yaml_path must be specified under model in setting.json")
+        if task == "classification":
+            model_obj = load_model_by_type(config.model)
 
-        model_config = load_model_config_yaml(yaml_path)
+            # Instantiate preprocessor
+            resize = config.preprocessing.resize
+            preprocessor = TorchClassificationPreprocessorCV2(resize=resize)
 
-        if wrapper_type == "torch":
-            return TorchModelWrapper(config_path=yaml_path)
-        elif wrapper_type == "torchvision":
-            return TorchVisionWrapper(config_path=yaml_path)
+            # Get class names
+            class_names = config.model.class_names
+            wrapper = TorchClassificationModelWrapper(
+                model=model_obj,
+                preprocessor=preprocessor,
+                class_names=class_names
+            )
+            return wrapper
+
+        elif task == "detection":
+            raise NotImplementedError("Detection task is not yet implemented.")
+
+        elif task == "segmentation":
+            raise NotImplementedError("Segmentation task is not yet implemented.")
+
         else:
-            raise ValueError(f"Unknown wrapper type: {wrapper_type}")
+            raise ValueError(f"Unsupported task: {task}")
+

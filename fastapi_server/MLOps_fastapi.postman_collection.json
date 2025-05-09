@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "716a61cb-f281-4f73-9bea-58b96486a1d7",
+		"name": "MLOps_fastapi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10600972"
+	},
+	"item": [
+		{
+			"name": "predict",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/User/Desktop/NCU/model_iteration_in_MLOps/datasets/test_classification/carpet/mvtec_carpet-color__NG_002.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{your-ip}}:8010/predict",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "batch_predict_path",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "folder_path",
+							"value": "/data/tiny_test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{your-ip}}:8010/batch_predict",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"batch_predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "batch_predict_zip",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "zip_file",
+							"type": "file",
+							"src": "/C:/Users/User/Desktop/NCU/model_iteration_in_MLOps/datasets/tiny_test.zip"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{your-ip}}:8010/batch_predict",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"batch_predict"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reload_model",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8010/reload_model",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"reload_model"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "server_health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8011/server_health",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8011",
+					"path": [
+						"server_health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "model_info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8010/model_info",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"model_info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "server_version",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8010/server_version",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"server_version"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deploy_model_zip",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/User/Downloads/model_c636c304-478d-4286-9862-c2ef85e1a7cf.zip"
+						},
+						{
+							"key": "job_id",
+							"value": "c636c304-478d-4286-9862-c2ef85e1a7cf",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{your-ip}}:8010/deploy_model_zip",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"deploy_model_zip"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_logs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8010/get_logs",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"get_logs"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

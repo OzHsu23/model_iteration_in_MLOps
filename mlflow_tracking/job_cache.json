@@ -1,0 +1,237 @@
+{
+  "job_status": {
+    "7550fbcd-1c01-4692-862e-1c53672afcab": "completed",
+    "b1dd3670-2e9a-4336-a49a-d80d9f73acea": "failed",
+    "cbb32fc7-4b12-4544-a33e-1f2dc7bc0c35": "failed",
+    "a52d593e-8a63-4384-98ad-1890f9c0912f": "failed",
+    "2f242e90-5123-4ed8-9932-d75d2eeefcd6": "failed",
+    "5fc597cb-987f-4973-b6d5-2c02ad6ed90c": "running",
+    "0e3d7572-793d-4a3d-bb0b-aa0f789a708d": "running",
+    "87c3bf78-7b2c-4a55-9051-11c2ca4f869b": "completed",
+    "50c28f08-0a61-4be6-adf7-c1003d018c2e": "completed",
+    "f66d5ecf-c777-4808-b123-fbec67f685cc": "failed",
+    "a6d667de-8cb7-4aed-bfff-654882b5a999": "failed",
+    "5fd3e6ac-155b-4114-b254-8e51e28a2998": "failed",
+    "396a0e75-51e4-4bb1-ad86-2c47b551cf12": "failed",
+    "762b9f39-fc79-4eb5-92fd-d96dcbb6bcea": "running",
+    "06b80cc9-f240-4e38-b412-a89c463a50b6": "running",
+    "59e82d9d-b02c-4466-a475-64fad6650acf": "completed",
+    "21a826d2-6208-4941-8218-47da1a397b94": "completed",
+    "ecc03b91-4a66-44ff-9b7e-dcd59eccc305": "failed",
+    "454a09b9-5303-450b-90ef-10e8589c24bc": "failed",
+    "6dac647e-a0e6-4ce2-b55c-d317441b368e": "failed",
+    "0ad15207-4df2-42ae-be5d-1a8b09228c6d": "failed",
+    "cafb5ed7-ada9-4418-b643-60bd4d223ec7": "running",
+    "6d547307-408a-47e9-a3f3-71fdc4c96713": "running",
+    "b9e94150-73fc-4dd8-ad5b-cb272c24a29a": "completed",
+    "8509284a-58bb-4889-afcd-6f10db8f267b": "completed",
+    "ee682d29-9913-4fc5-84e2-bf2ff6229d16": "failed",
+    "e0e2bded-1328-4c1f-afc5-82a1f265ce2c": "failed",
+    "23bd918d-61e3-428a-b927-ff7c459395c2": "failed",
+    "1f45f1ba-f9b5-4b75-b235-79aa78f09c32": "failed",
+    "930baff3-af5a-4f17-8a47-41ed9d1fd99f": "running",
+    "f88c816c-0720-453b-be06-92ac3cbfec66": "running",
+    "eb5dd2c3-b3d5-45ee-a0e6-160c0f7dbcdf": "completed",
+    "386e515a-ac7c-4be9-a7e9-c90d3a3709b9": "completed",
+    "f23ad0b1-4a8e-45b2-8406-34b245b7182c": "failed",
+    "c6388cde-c4e8-4587-b372-28769201626d": "completed",
+    "05a426d0-00e9-4339-b8e3-687430e0b2cd": "failed",
+    "eb754e81-30d0-4d3d-92d1-f95fbcd6a9a6": "failed",
+    "c636c304-478d-4286-9862-c2ef85e1a7cf": "completed",
+    "9d8dc655-5f09-43f1-a397-01f2e17c57bd": "failed"
+  },
+  "job_metrics": {
+    "7550fbcd-1c01-4692-862e-1c53672afcab": {
+      "current_epoch": 5,
+      "total_epoch": 5,
+      "train_loss": 0.37206110656261443,
+      "val_loss": 0.3141147792339325,
+      "train_accuracy": 0.9625,
+      "val_accuracy": 1.0,
+      "finished": true
+    },
+    "b1dd3670-2e9a-4336-a49a-d80d9f73acea": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "cbb32fc7-4b12-4544-a33e-1f2dc7bc0c35": {
+      "error": "[Errno 2] No such file or directory: '/tmp/job_cbb32fc7-4b12-4544-a33e-1f2dc7bc0c35/setting.json'"
+    },
+    "a52d593e-8a63-4384-98ad-1890f9c0912f": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "2f242e90-5123-4ed8-9932-d75d2eeefcd6": {
+      "error": "[Errno 2] No such file or directory: '/tmp/job_2f242e90-5123-4ed8-9932-d75d2eeefcd6/setting.json'"
+    },
+    "5fc597cb-987f-4973-b6d5-2c02ad6ed90c": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "0e3d7572-793d-4a3d-bb0b-aa0f789a708d": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "87c3bf78-7b2c-4a55-9051-11c2ca4f869b": {
+      "accuracy": 0.98,
+      "loss": 0.05
+    },
+    "50c28f08-0a61-4be6-adf7-c1003d018c2e": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "f66d5ecf-c777-4808-b123-fbec67f685cc": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "a6d667de-8cb7-4aed-bfff-654882b5a999": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "5fd3e6ac-155b-4114-b254-8e51e28a2998": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "396a0e75-51e4-4bb1-ad86-2c47b551cf12": {
+      "error": "[Errno 2] No such file or directory: '/tmp/job_396a0e75-51e4-4bb1-ad86-2c47b551cf12/setting.json'"
+    },
+    "762b9f39-fc79-4eb5-92fd-d96dcbb6bcea": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "06b80cc9-f240-4e38-b412-a89c463a50b6": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "59e82d9d-b02c-4466-a475-64fad6650acf": {
+      "accuracy": 0.98,
+      "loss": 0.05
+    },
+    "21a826d2-6208-4941-8218-47da1a397b94": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "ecc03b91-4a66-44ff-9b7e-dcd59eccc305": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "454a09b9-5303-450b-90ef-10e8589c24bc": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "6dac647e-a0e6-4ce2-b55c-d317441b368e": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "0ad15207-4df2-42ae-be5d-1a8b09228c6d": {
+      "error": "[Errno 2] No such file or directory: '/tmp/job_0ad15207-4df2-42ae-be5d-1a8b09228c6d/setting.json'"
+    },
+    "cafb5ed7-ada9-4418-b643-60bd4d223ec7": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "6d547307-408a-47e9-a3f3-71fdc4c96713": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "b9e94150-73fc-4dd8-ad5b-cb272c24a29a": {
+      "accuracy": 0.98,
+      "loss": 0.05
+    },
+    "8509284a-58bb-4889-afcd-6f10db8f267b": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "ee682d29-9913-4fc5-84e2-bf2ff6229d16": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "e0e2bded-1328-4c1f-afc5-82a1f265ce2c": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "23bd918d-61e3-428a-b927-ff7c459395c2": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "1f45f1ba-f9b5-4b75-b235-79aa78f09c32": {
+      "error": "[Errno 2] No such file or directory: '/tmp/job_1f45f1ba-f9b5-4b75-b235-79aa78f09c32/setting.json'"
+    },
+    "930baff3-af5a-4f17-8a47-41ed9d1fd99f": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "f88c816c-0720-453b-be06-92ac3cbfec66": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "eb5dd2c3-b3d5-45ee-a0e6-160c0f7dbcdf": {
+      "accuracy": 0.98,
+      "loss": 0.05
+    },
+    "386e515a-ac7c-4be9-a7e9-c90d3a3709b9": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "f23ad0b1-4a8e-45b2-8406-34b245b7182c": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "c6388cde-c4e8-4587-b372-28769201626d": {
+      "accuracy": 0.99,
+      "loss": 0.01
+    },
+    "05a426d0-00e9-4339-b8e3-687430e0b2cd": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "eb754e81-30d0-4d3d-92d1-f95fbcd6a9a6": {
+      "error": "CSV must contain 'filename' and 'label' columns."
+    },
+    "c636c304-478d-4286-9862-c2ef85e1a7cf": {
+      "current_epoch": 5,
+      "total_epoch": 5,
+      "train_loss": 0.4022581010095535,
+      "val_loss": 0.37572298049926756,
+      "train_accuracy": 0.9186991869918699,
+      "val_accuracy": 0.9444444444444444,
+      "finished": true
+    },
+    "9d8dc655-5f09-43f1-a397-01f2e17c57bd": {
+      "error": "[Errno 2] No such file or directory: '/tmp/job_9d8dc655-5f09-43f1-a397-01f2e17c57bd/setting.json'"
+    }
+  },
+  "job_model_paths": {
+    "7550fbcd-1c01-4692-862e-1c53672afcab": "/saved_models/7550fbcd-1c01-4692-862e-1c53672afcab.zip",
+    "50c28f08-0a61-4be6-adf7-c1003d018c2e": "/tmp/model_50c28f08-0a61-4be6-adf7-c1003d018c2e.zip",
+    "21a826d2-6208-4941-8218-47da1a397b94": "/tmp/model_21a826d2-6208-4941-8218-47da1a397b94.zip",
+    "8509284a-58bb-4889-afcd-6f10db8f267b": "/tmp/model_8509284a-58bb-4889-afcd-6f10db8f267b.zip",
+    "386e515a-ac7c-4be9-a7e9-c90d3a3709b9": "/tmp/model_386e515a-ac7c-4be9-a7e9-c90d3a3709b9.zip",
+    "c6388cde-c4e8-4587-b372-28769201626d": "/tmp/model_c6388cde-c4e8-4587-b372-28769201626d.zip",
+    "c636c304-478d-4286-9862-c2ef85e1a7cf": "/saved_models/c636c304-478d-4286-9862-c2ef85e1a7cf.zip"
+  },
+  "job_progress": {
+    "7550fbcd-1c01-4692-862e-1c53672afcab": {
+      "current_epoch": 5,
+      "total_epoch": 5,
+      "train_loss": 0.37206110656261443,
+      "val_loss": 0.3141147792339325,
+      "train_accuracy": 0.9625,
+      "val_accuracy": 1.0,
+      "finished": true
+    },
+    "0e3d7572-793d-4a3d-bb0b-aa0f789a708d": {
+      "epoch": 2,
+      "total": 10
+    },
+    "06b80cc9-f240-4e38-b412-a89c463a50b6": {
+      "epoch": 2,
+      "total": 10
+    },
+    "6d547307-408a-47e9-a3f3-71fdc4c96713": {
+      "epoch": 2,
+      "total": 10
+    },
+    "trainer_test": {
+      "current_epoch": 1,
+      "total_epoch": 1,
+      "train_loss": 0.6697252988815308,
+      "val_loss": 0.6931522488594055,
+      "train_accuracy": 0.5,
+      "val_accuracy": 0.5,
+      "finished": true
+    },
+    "f88c816c-0720-453b-be06-92ac3cbfec66": {
+      "epoch": 2,
+      "total": 10
+    },
+    "c6388cde-c4e8-4587-b372-28769201626d": {
+      "epoch": 3,
+      "total": 10
+    },
+    "c636c304-478d-4286-9862-c2ef85e1a7cf": {
+      "current_epoch": 5,
+      "total_epoch": 5,
+      "train_loss": 0.4022581010095535,
+      "val_loss": 0.37572298049926756,
+      "train_accuracy": 0.9186991869918699,
+      "val_accuracy": 0.9444444444444444,
+      "finished": true
+    }
+  }
+}

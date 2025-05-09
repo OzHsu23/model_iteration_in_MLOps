@@ -4,9 +4,9 @@
         "model_type": "torch_mlflow",
         "run_id": "",
         "tracking_uri": "",
-        "local_path": "./weights/efficientnet_b1/model_state_dict.pth",
+        "local_path": "./weights/efficientnet_v2_s/model_state_dict.pth",
         "yaml_path": "",
-        "model_name": "efficientnet_b1",
+        "model_name": "efficientnet_v2_s",
         "num_classes": 2,
         "class_names": [
             "NG",
@@ -21,10 +21,10 @@
         "type": "default"
     },
     "server": {
-        "port": 8010
+        "port": 8000
     },
     "logging": {
-        "log_path": "logs/inference_logs_8010.csv",
+        "log_path": "logs/inference_logs_8011.csv",
         "enable": true
     }
 }

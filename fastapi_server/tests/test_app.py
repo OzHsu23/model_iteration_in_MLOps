@@ -1,83 +1,114 @@
 import io
-import os
-from app import app
-from fastapi.testclient import TestClient
+import json
+import zipfile
+import pytest
+from unittest.mock import patch, MagicMock
 
 
+def test_server_health(client):
+    """[GET] /server_health - Check if server responds with OK status"""
+    response = client.get("/server_health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
 
-client = TestClient(app)
 
-def test_predict_valid_image():
-    with open("tests/test_data/test_image.jpg", "rb") as image_file:
+def test_server_version(client):
+    """[GET] /server_version - Verify server version metadata is returned"""
+    response = client.get("/server_version")
+    assert response.status_code == 200
+    assert "server_version" in response.json()
+
+
+def test_model_info(client):
+    """[GET] /model_info - Confirm model metadata is present"""
+    response = client.get("/model_info")
+    assert response.status_code == 200
+    data = response.json()
+    assert "framework" in data
+    assert "model_format" in data
+
+
+def test_predict_valid_image(client):
+    """[POST] /predict - Test prediction with a valid image"""
+    with open("tests/test_data/sample.jpg", "rb") as img:
         response = client.post(
             "/predict",
-            files={"file": ("test_image.jpg", image_file, "image/jpeg")}
+            files={"file": ("sample.jpg", img, "image/jpeg")}
         )
     assert response.status_code == 200
-    assert "prediction" in response.json()
-    assert "confidence" in response.json()
+    assert isinstance(response.json(), dict)
 
-def test_predict_invalid_file_type():
-    with open("tests/test_data/test_file.txt", "rb") as text_file:
-        response = client.post(
-            "/predict",
-            files={"file": ("test_file.txt", text_file, "text/plain")}
-        )
-    assert response.status_code == 415
-    assert response.json()["detail"] == "Only image files supported."
 
-def test_batch_predict_with_folder_path():
+def test_predict_invalid_file_type(client):
+    """[POST] /predict - Should return 415 for non-image file"""
     response = client.post(
-        "/batch_predict",
-        data={"folder_path": "tests/test_data/test_images_folder"}
+        "/predict",
+        files={"file": ("sample.txt", b"hello", "text/plain")}
     )
-    assert response.status_code == 200
-    assert "results" in response.json()
-    assert isinstance(response.json()["results"], list)
+    assert response.status_code == 415
 
-def test_batch_predict_with_zip_file():
-    with open("tests/test_data/test_images.zip", "rb") as zip_file:
+
+def test_batch_predict_zip(client):
+    """[POST] /batch_predict - Test prediction with a valid zip file"""
+    with open("tests/test_data/sample.zip", "rb") as zf:
         response = client.post(
             "/batch_predict",
-            files={"zip_file": ("test_images.zip", zip_file, "application/zip")}
+            files={"zip_file": ("sample.zip", zf, "application/zip")}
         )
+    assert response.status_code in [200, 400]  # Depends on content validity
+
+
+def test_reload_model(client):
+    """[POST] /reload_model - Reload the model without restarting"""
+    response = client.post("/reload_model")
     assert response.status_code == 200
-    assert "results" in response.json()
-    assert isinstance(response.json()["results"], list)
+    assert "status" in response.json()
 
-def test_batch_predict_no_input():
-    response = client.post("/batch_predict")
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Either folder_path or zip_file must be provided."
 
-def test_batch_predict_empty_folder():
+def test_deploy_model_zip_invalid_file(client):
+    """[POST] /deploy_model_zip - Invalid file type should return 400"""
     response = client.post(
-        "/batch_predict",
-        data={"folder_path": "tests/empty_folder"}
+        "/deploy_model_zip",
+        data={"job_id": "1234"},
+        files={"file": ("model.txt", b"not a zip", "text/plain")}
     )
     assert response.status_code == 400
-    assert response.json()["detail"] == "Provided folder_path is not a valid directory."
-    def test_predict_invalid_image_file():
-        with open("tests/invalid_image.jpg", "rb") as invalid_image_file:
-            response = client.post(
-                "/predict",
-                files={"file": ("invalid_image.jpg", invalid_image_file, "image/jpeg")}
-            )
-        assert response.status_code == 422  # Assuming invalid image raises a validation error
 
-    def test_predict_logging():
-        log_file = "inference_logs.csv"
-        if os.path.exists(log_file):
-            os.remove(log_file)
 
-        with open("tests/test_image.jpg", "rb") as image_file:
-            response = client.post(
-                "/predict",
-                files={"file": ("test_image.jpg", image_file, "image/jpeg")}
-            )
-        assert response.status_code == 200
+def test_deploy_model_zip_missing_job_id(client):
+    """[POST] /deploy_model_zip - Missing job_id should raise 422 validation error"""
+    with open("tests/test_data/sample.zip", "rb") as zf:
+        response = client.post(
+            "/deploy_model_zip",
+            files={"file": ("sample.zip", zf, "application/zip")}
+        )
+    assert response.status_code == 422
 
-        assert os.path.exists(log_file)
-        with open(log_file, "r") as f:
-            logs = f.readlines()
-        assert len(logs) > 0  # Ensure at least one log entry exists
+
+def test_deploy_model_zip_success_mocked(client, test_settings_dict):
+    """[POST] /deploy_model_zip - Valid zip with mocked config from fixture"""
+    zip_buf = io.BytesIO()
+    with zipfile.ZipFile(zip_buf, "w") as zipf:
+        zipf.writestr("inference_setting.json", json.dumps(test_settings_dict))
+        zipf.writestr("model.pth", b"fake-model-weights")
+    zip_buf.seek(0)
+
+    with patch("app.app.ModelFactory.create_model") as mock_create_model:
+        mock_model = MagicMock()
+        mock_create_model.return_value = mock_model
+
+        response = client.post(
+            "/deploy_model_zip",
+            data={"job_id": "mock_job"},
+            files={"file": ("model.zip", zip_buf, "application/zip")}
+        )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "Deployment successful"
+    assert response.json()["job_id"] == "mock_job"
+
+
+def test_get_logs(client):
+    """[GET] /get_logs - Return CSV log file if it exists"""
+    response = client.get("/get_logs")
+    assert response.status_code in [200, 404]

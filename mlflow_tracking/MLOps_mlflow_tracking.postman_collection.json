@@ -1,0 +1,192 @@
+{
+	"info": {
+		"_postman_id": "84e196cc-9aeb-4ff7-8df1-1b4b6ff2c706",
+		"name": "MLOps_mlflow_tracking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10600972"
+	},
+	"item": [
+		{
+			"name": "start_retrain_setting",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"task_type\": \"classification\",\r\n    \"experiment_name\": \"efficientnet_v2_s_e5_test\",\r\n    \"common\": {\r\n        \"data_dir\": \"/data/test_classification/train\",\r\n        \"img_size\": 256,\r\n        \"random_seed\": 666\r\n    },\r\n    \"task\": {\r\n        \"data\": {\r\n            \"train_csv\": \"train.csv\",\r\n            \"val_csv\": \"val.csv\"\r\n        },\r\n        \"model\": {\r\n            \"model_name\": \"efficientnet_v2_s\",\r\n            \"num_classes\": 2,\r\n            \"pretrained\": true,\r\n            \"weight_path\": null\r\n        },\r\n        \"training\": {\r\n            \"batch_size\": 4,\r\n            \"num_epochs\": 5,\r\n            \"learning_rate\": 0.0003\r\n        }\r\n    },\r\n    \"mlflow\": {\r\n        \"tracking_uri\": \"/mlflow_tracking/mlruns\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{your-ip}}:8020/start_retrain",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8020",
+					"path": [
+						"start_retrain"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "start_retrain_zip",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "zip_file",
+							"type": "file",
+							"src": "/C:/Users/User/Desktop/NCU/model_iteration_in_MLOps/datasets/test_classification/train.zip"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{your-ip}}:8020/start_retrain",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8020",
+					"path": [
+						"start_retrain"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrain_status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8020/retrain_status?job_id=c636c304-478d-4286-9862-c2ef85e1a7cf",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8020",
+					"path": [
+						"retrain_status"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "c636c304-478d-4286-9862-c2ef85e1a7cf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrain_progress",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8020/retrain_progress?job_id=c636c304-478d-4286-9862-c2ef85e1a7cf",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8020",
+					"path": [
+						"retrain_progress"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "c636c304-478d-4286-9862-c2ef85e1a7cf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "retrain_metrics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8020/retrain_metrics?job_id=c636c304-478d-4286-9862-c2ef85e1a7cf",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8020",
+					"path": [
+						"retrain_metrics"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "c636c304-478d-4286-9862-c2ef85e1a7cf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "download_model",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8020/download_model?job_id=c636c304-478d-4286-9862-c2ef85e1a7cf",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8020",
+					"path": [
+						"download_model"
+					],
+					"query": [
+						{
+							"key": "job_id",
+							"value": "c636c304-478d-4286-9862-c2ef85e1a7cf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "latest_job_id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8020/latest_job_id",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8020",
+					"path": [
+						"latest_job_id"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
