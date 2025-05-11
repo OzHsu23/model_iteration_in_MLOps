@@ -228,6 +228,83 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "export_model",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8010/export_model",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"export_model"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "evaluate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "model_zip",
+							"type": "file",
+							"src": "/C:/Users/User/Desktop/NCU/model_iteration_in_MLOps/datasets/deployed_model.zip"
+						},
+						{
+							"key": "image_zip",
+							"type": "file",
+							"src": "/C:/Users/User/Desktop/NCU/model_iteration_in_MLOps/datasets/tiny_test/tiny_test.zip"
+						},
+						{
+							"key": "metric",
+							"value": "accuracy",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{your-ip}}:8010/evaluate",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"evaluate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deploy_status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{your-ip}}:8010/deploy_status",
+					"protocol": "http",
+					"host": [
+						"{{your-ip}}"
+					],
+					"port": "8010",
+					"path": [
+						"deploy_status"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

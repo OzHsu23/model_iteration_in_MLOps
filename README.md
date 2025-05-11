@@ -25,8 +25,11 @@ flowchart TD
     C --> D[送 B1/B2 推論]
     D --> E[篩選一致 + 高信心樣本]
     E --> F[準備訓練資料]
-    F --> G[MLflow 重訓模型]
-    G --> H[部署模型至 FastAPI]
+    F --> G[MLflow 重訓練模型]
+    G --> I[評估新舊模型效能]
+    I -->|新模型更佳| H[部署模型至 FastAPI]
+    I -->|新模型不佳| Y[發送示警，不部署]
+
     B -->|良率高| Z[等待下次檢查]
 ```
 
@@ -38,8 +41,8 @@ flowchart TD
     "themeVariables": {
         "fontSize": "20px",
         "nodePadding": "15px",               
-        "clusterPadding": "25px",            
-        "lineStrokeWidth": "3px",            
+        "clusterPadding": "25px",           
+        "lineStrokeWidth": "3px",           
         "arrowheadSize": "12",              
         "edgeLabelBackground":"#e6e6e6"   
     }
@@ -49,6 +52,7 @@ flowchart TD
         A1[📤 /predict<br>模型推論 API]
         A2[🔁 /batch_predict<br>B1/B2 過濾 API]
         A3[📥 /deploy_model_zip<br>部署新模型]
+        A4[📊 /evaluate<br>模型評估 API]
     end
 
     subgraph sg_mlflow [MLflow 模型訓練模組]
@@ -63,8 +67,10 @@ flowchart TD
         C1[📈 monitor_yield_dag<br>良率監控]
         C2[🧪 prepare_training_data_dag<br>樣本篩選 + 建立訓練集]
         C3[🔁 retrain_model_dag<br>觸發 retrain 並追蹤]
-        C4[🚀 deploy_model_dag<br>更新 FastAPI 模型]
+        C4[🚀 deploy_model_dag<br>部署決策]
         C5[🧠 controller_dag<br>控制整體流程]
+        D1{📊 新模型效能優於舊模型？}
+        D2[📢 發送示警<br>不部署]
     end
 
     A1 --> C1
@@ -75,7 +81,10 @@ flowchart TD
     B1 --> B5
     B5 --> B4
     B4 --> C4
-    C4 --> A3
+    C4 --> A4
+    A4 --> D1
+    D1 -->|是| A3
+    D1 -->|否| D2
 
     style sg_fastapi fill:#fef3c7,stroke:#facc15,stroke-width:4px
     style sg_mlflow fill:#e0f2fe,stroke:#3b82f6,stroke-width:4px
@@ -97,13 +106,16 @@ flowchart TD
 │   │   ├── retrain_model_dag.py           # 呼叫 retrain API 並追蹤訓練狀態
 │   │   ├── deploy_model_dag.py            # 部署 retrain 完成的模型到 FastAPI
 │   │   ├── production_pipeline_controller_dag.py  # 串接全流程的總控 DAG
-│   │   └── production_line_inference_dag.py       # 模擬產線推論，生成 log
+│   │   ├── production_line_inference_dag.py       # 模擬產線推論，生成 log
+│   │   └── evaluate_model_before_deploy_dags.py # 評估retrain 模型來決定是否部署
+
 │   ├── scripts/
 │   │   ├── check_yield.py
 │   │   ├── prepare_training_samples.py
 │   │   ├── run_simulated_inference.py
 │   │   ├── trigger_retrain.py
-│   │   └── deploy_new_model.py
+│   │   ├── deploy_new_model.py
+│   │   └── evaluate_model.py
 │   ├── globals.py
 │   └── schemas.py
 
@@ -113,6 +125,7 @@ flowchart TD
 │   └── app/
 │       ├── app.py                     # API 路由（如 /predict、/reload_model）
 │       ├── app_utils.py
+│       ├── globals.py
 │       └── schemas.py                 # 定義 FastAPI 參數與驗證格式
 
 ├── mlflow_tracking/
@@ -122,10 +135,10 @@ flowchart TD
 │   └── app/
 │       ├── app.py                     # retrain 相關 API（如 /start_retrain）
 │       ├── app_utils.py
+│       ├── globals.py
 │       └── schemas.py                 # 定義 retrain API 參數與驗證格式
 │   └── training/
 │       ├── config.py
-│       ├── globals.py
 │       ├── model_zoo/                # 建立指定模型（分類、檢測、分割）
 │       ├── trainers/                 # 對應任務的訓練流程
 │       │   ├── classification_trainer.py
@@ -175,8 +188,6 @@ docker-compose exec airflow-webserver airflow db init
 http://<your-ip>:8080
 ```
 
-Ps: 若無法開啟：
-
 
 
 
@@ -221,39 +232,48 @@ production_pipeline_controller_dag
 
 ```jsonc
 {
-  "production_line": {
-    "inference_server_api": "http://host.docker.internal:8010/predict",
-    "inference_image_dir": "data/inference_images",
-    "repeat": 1
-  },
-  "monitor": {
-    "yield_threshold": 0.7,
-    "recent_window": 100,
-    "yield_drop_tolerance": 0.05,
-    "log_path": "resources/inference_logs_8010.csv",
-    "flag_path": "resources/flags/need_retrain.flag",
-    "monitor_delay_sec": 30
-  },
-  "prepare_training_data": {
-    "inference_image_dir": "data/inference_images",
-    "selected_sample_dir": "data/selected_recent_samples",
-    "training_template_path": "configs/training_template.json",
-    "final_training_zip": "data/train_package.zip",
-    "merge_with_previous": "",
-    "b1_inference_api": "http://host.docker.internal:8011/batch_predict",
-    "b2_inference_api": "http://host.docker.internal:8012/batch_predict",
-    "confidence_threshold": 0.7,
-    "val_ratio": 0.05
-  },
-  "retrain": {
-    "retrain_server_api": "http://host.docker.internal:8020",
-    "max_wait_sec": 600,
-    "poll_interval_sec": 10
-  },
-  "deploy": {
-    "inference_server_api": "http://host.docker.internal:8010/deploy_model_zip",
-    "job_id_to_deploy": "7550fbcd-1c01-4692-862e-1c53672afcab"
-  }
+    "production_line": {
+        "inference_server_api": "http://host.docker.internal:8010/predict",
+        "inference_image_dir": "./data/val",
+        "repeat": 1
+    },
+    "monitor": {
+        "yield_threshold": 0.7,
+        "recent_window": 29,
+        "yield_drop_tolerance": 0.05,
+        "log_path": "./resources/inference_logs_8010.csv",
+        "flag_path": "./resources/flags/need_retrain.flag",
+        "monitor_delay_sec": 30
+    },
+    "prepare_training_data": {
+        "inference_image_dir": "./data/val",
+        "selected_sample_dir": "./data/selected_recent_samples",
+        "training_template_path": "configs/training_template.json",
+        "final_training_zip": "./data/train_package.zip",
+        "merge_with_previous": "./data/train",
+        "b1_inference_api": "http://host.docker.internal:8011/batch_predict",
+        "b2_inference_api": "http://host.docker.internal:8012/batch_predict",
+        "confidence_threshold": 0.7,
+        "val_ratio": 0.1
+    },
+    "retrain": {
+        "retrain_server_api": "http://host.docker.internal:8020",
+        "max_wait_sec": 600,
+        "poll_interval_sec": 10
+    },
+    "evaluate_before_deploy": {
+        "image_dir_or_zip": "./data/test.zip",
+        "eval_inference_api": "http://host.docker.internal:8016/evaluate",
+        "metric": "accuracy",
+        "min_improvement": 0.01,
+        "old_model_api": "http://host.docker.internal:8010/export_model",
+        "new_model_api": "http://host.docker.internal:8020/download_model",
+        "result_flag_path": "./resources/flags/evaluate_result.json"
+    },
+    "deploy": {
+        "inference_server_api": "http://host.docker.internal:8010/deploy_model_zip",
+        "job_id_to_deploy": "fa1a7096-cccf-4f8f-a196-b518ac8c581d"
+    }
 }
 ```
 🔍 關鍵參數說明
@@ -271,11 +291,12 @@ production_pipeline_controller_dag
 ---
 
 ## 📈 下一步：
-* ✨ 增加部署前後驗證模型功能
+* ❌ ~~原本直接部署模型，已改為先驗證再決定部署~~
 * ✨ 支援K8S部署
 * ✨ 支援Github Actions CI/CD
 * ✨ 客製化分類資料集教學文件
 * ✨ 分類任務的實驗紀錄
+* ✨ 支援Email示警
 * ✨ 支援不同模型(Object Detection 、Segmentation)
 * ✨ 支援不同訓練樣本選擇方式
 * ✨ 更細拆分Airflow 流程並模組化，可更好客制化流程

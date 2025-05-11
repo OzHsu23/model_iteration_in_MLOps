@@ -1,6 +1,7 @@
 # training/globals.py
-
+import os
 import json
+from pathlib import Path
 
 # Global dictionaries to store job-related state
 job_progress = {}        # Tracks current epoch, loss, accuracy, etc.
@@ -21,3 +22,8 @@ def save_job_status():
             "job_progress": job_progress
         }, f, indent=2)
 
+
+# Path to package MLflow tracking
+
+PACKAGE_DIR = Path.home() / "model_iteration_in_MLOps" / "mlflow_tracking"
+os.makedirs(PACKAGE_DIR, exist_ok=True)

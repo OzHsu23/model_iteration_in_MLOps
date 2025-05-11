@@ -17,13 +17,14 @@ from training.trainers.segmentation_trainer import SegmentationTrainer
 from training.utils.common import set_seed
 
 
-from training.globals import (
+from app.globals import (
     job_status,
     job_metrics,
     job_model_paths,
     job_progress,
     job_registry_path,
-    save_job_status
+    save_job_status,
+    PACKAGE_DIR
 )
 
 # ========== Load persisted job state ==========
@@ -83,7 +84,7 @@ def run_zip_retrain(zip_path, job_id):
         save_job_status()
 
         # Unpack ZIP contents
-        work_dir = f"/tmp/job_{job_id}"
+        work_dir = f"{PACKAGE_DIR}/job_{job_id}"
         os.makedirs(work_dir, exist_ok=True)
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(work_dir)
@@ -121,7 +122,7 @@ def run_zip_retrain(zip_path, job_id):
 
 # ========== Save model artifacts ==========
 def save_model_package(trainer, job_id, extra_files=[]):
-    model_dir = f"/saved_models/{job_id}"
+    model_dir = f"{PACKAGE_DIR}/{job_id}"
     os.makedirs(model_dir, exist_ok=True)
 
     # Save model
