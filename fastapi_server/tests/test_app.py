@@ -112,3 +112,59 @@ def test_get_logs(client):
     """[GET] /get_logs - Return CSV log file if it exists"""
     response = client.get("/get_logs")
     assert response.status_code in [200, 404]
+
+
+def test_export_model(client):
+    """[GET] /export_model - Check if model zip is returned"""
+    with patch("app.app.export_current_model_zip") as mock_export:
+        mock_export.return_value = "tests/test_data/sample.zip"
+        response = client.get("/export_model")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/zip"
+    assert "deployed_model.zip" in response.headers["content-disposition"]
+
+
+def test_evaluate_model_with_uploads(client):
+    """[POST] /evaluate - Evaluate with uploaded zip files"""
+    model_buf = io.BytesIO()
+    with zipfile.ZipFile(model_buf, "w") as zf:
+        zf.writestr("model.pth", b"mock model")
+    model_buf.seek(0)
+
+    image_buf = io.BytesIO()
+    with zipfile.ZipFile(image_buf, "w") as zf:
+        zf.writestr("sample.jpg", b"mock image")
+    image_buf.seek(0)
+
+    with patch("app.app.evaluate_model_zip") as mock_eval:
+        mock_eval.return_value = 0.87
+        response = client.post(
+            "/evaluate",
+            files={
+                "model_zip": ("model.zip", model_buf, "application/zip"),
+                "image_zip": ("images.zip", image_buf, "application/zip")
+            },
+            data={"metric": "accuracy"}
+        )
+
+    assert response.status_code == 200
+    result = response.json()
+    assert "score" in result and "metric" in result
+    assert result["metric"] == "accuracy"
+
+
+def test_evaluate_model_missing_inputs(client):
+    """[POST] /evaluate - Should return 400 if no model or image input provided"""
+    response = client.post("/evaluate", data={"metric": "accuracy"})
+    assert response.status_code == 400
+
+
+def test_deploy_status(client):
+    """[GET] /deploy_status - Return current model deployment status"""
+    with patch("app.app.get_current_deploy_status") as mock_status:
+        mock_status.return_value = {"status": "active", "model_name": "demo_model"}
+        response = client.get("/deploy_status")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "active"
+    assert "model_name" in data

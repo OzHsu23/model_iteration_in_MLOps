@@ -87,6 +87,19 @@ services:
       - ./datasets:/data
     command: python run_app.py --setting_path=setting_b2.json --port=8000 --host=0.0.0.0
 
+  fastapi_eval:
+    build:
+      context: ./fastapi_server
+    image: mlops_fastapi_server
+    container_name: fastapi_inference_container_eval
+    restart: always
+    ports:
+      - "8016:8000"
+    volumes:
+      - ./fastapi_server:/app
+      - ./datasets:/data
+    command: python run_app.py --setting_path=setting_eval.json --port=8000 --host=0.0.0.0
+
   mlflow_tracking:
     build:
       context: ./mlflow_tracking

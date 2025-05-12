@@ -15,7 +15,7 @@ from training.mlflow_utils.mlflow_manager import MLflowManager
 from training.trainers.classification_settings import ClassificationSettings
 
 
-from training.globals import job_progress, save_job_status
+from app.globals import job_progress, save_job_status
 
 
 class ClassificationTrainer(BaseTrainer):

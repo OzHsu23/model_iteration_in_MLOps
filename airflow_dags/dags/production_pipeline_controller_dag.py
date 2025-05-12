@@ -31,8 +31,24 @@ def check_retrain_flag(**kwargs):
     if os.path.exists(flag_path):
         return "prepare_training_data"
     else:
-        return "end_cycle"
+        return "not_retrain"
 
+def check_deploy_flag(**kwargs):
+    """
+    Check if the deploy flag file exists (e.g., set by evaluation DAG).
+    Return the task_id of the next task: deploy or skip.
+    """
+    config_path = kwargs["params"]["config_path"]
+    with open(config_path, "r") as f:
+        config = json.load(f)
+    result_flag_path = config["evaluate_before_deploy"]["result_flag_path"]
+    with open(result_flag_path, "r") as f:
+        result = json.load(f)
+    isdeploy = result["deploy"]
+    if isdeploy:
+        return "deploy_new_model"
+    else:
+        return "skip_deploy"
 
 def get_monitor_delay_from_config(config_path):
     with open(config_path, "r") as f:
@@ -45,6 +61,8 @@ def delay_monitoring(**context):
     print(f"[INFO] Delaying monitor start by {delay_sec} seconds...")
     time.sleep(delay_sec)
 
+def skip_message():
+    print("No retrain needed this round.")
 
 default_args = {
     "owner": "airflow",
@@ -65,21 +83,21 @@ with DAG(
 
     # Step 1: Simulate inference and write logs
     t1_inference = TriggerDagRunOperator(
-        task_id="production_line_inference_server",
+        task_id="production_line_inference",
         trigger_dag_id="production_line_inference_dag",
         conf={"config_path": "{{ params.config_path }}"},
         wait_for_completion=True
     )
     
     t_delay_monitor = PythonOperator(
-        task_id="delay_to_monitoring",
+        task_id="wait_before_monitoring",
         python_callable=delay_monitoring,
         provide_context=True
     )
 
     # Step 2: Monitor yield from logs
     t2_monitor = TriggerDagRunOperator(
-        task_id="monitor_yield_rate",
+        task_id="monitor_yield",
         trigger_dag_id="monitor_yield_dag",
         conf={"config_path": "{{ params.config_path }}"},
         wait_for_completion=True
@@ -87,7 +105,7 @@ with DAG(
 
     # Step 3: Branch - check if retrain flag is present
     t3_check_flag = BranchPythonOperator(
-        task_id="check_does_need_retrain",
+        task_id="should_retrain",
         python_callable=check_retrain_flag,
         provide_context=True
     )
@@ -107,6 +125,20 @@ with DAG(
         conf={"config_path": "{{ params.config_path }}"},
         wait_for_completion=True
     )
+    
+    # Step 5.5: Evaluate new model performace
+    t5_5_evaluate = TriggerDagRunOperator(
+        task_id="evaluate_model_performance",
+        trigger_dag_id="evaluate_model_before_deploy_dag",
+        conf={"config_path": "{{ params.config_path }}"},
+        wait_for_completion=True
+    )
+    
+    t5_6_check_deploy_flag = BranchPythonOperator(
+        task_id="should_deploy",
+        python_callable=check_deploy_flag,
+        provide_context=True
+    )
 
     # Step 6: Deploy the new model to FastAPI
     t6_deploy = TriggerDagRunOperator(
@@ -116,17 +148,28 @@ with DAG(
         wait_for_completion=True
     )
 
-    # Dummy task: skip retrain cycle
-    def skip_message():
-        print("No retrain needed this round.")
+    t_skip_deploy = PythonOperator(
+        task_id="skip_deploy",
+        python_callable=lambda: print("Evaluation not improved. Skip deploy.")
+    )
+
 
     t_end = PythonOperator(
-        task_id="end_cycle",
+        task_id="skip_retrain",
         python_callable=skip_message
     )
 
     # Define dependencies (control flow)
     t1_inference
     t_delay_monitor >> t2_monitor >> t3_check_flag 
-    t3_check_flag >> t4_prepare >> t5_retrain >> t6_deploy
+    
+    # retrain → evaluate → check deploy flag
+    t3_check_flag >> t4_prepare >> t5_retrain >> t5_5_evaluate >> t5_6_check_deploy_flag
+    
+    # branch: deploy or skip
+    t5_6_check_deploy_flag >> t_skip_deploy
+    t5_6_check_deploy_flag >> t6_deploy
+    
+    
+    # not retrain → end cycle
     t3_check_flag >> t_end

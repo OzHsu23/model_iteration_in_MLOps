@@ -2,7 +2,7 @@ import io
 import json
 import zipfile
 import pytest
-
+from app import globals as g
 
 def test_start_retrain_api(client, test_settings_dict):
     """[POST] /start_retrain - config + zip modes"""
@@ -41,7 +41,7 @@ def retrain_job_id(client, test_settings_dict):
 
 def test_retrain_status_api(client, retrain_job_id):
     """[GET] /retrain_status - valid & invalid cases"""
-    from training import globals as g
+    
     g.job_status[retrain_job_id] = "running"
 
     valid = client.get(f"/retrain_status?job_id={retrain_job_id}")
@@ -54,7 +54,7 @@ def test_retrain_status_api(client, retrain_job_id):
 
 def test_retrain_progress_api(client, retrain_job_id):
     """[GET] /retrain_progress - valid & invalid cases"""
-    from training import globals as g
+    
     g.job_status[retrain_job_id] = "running"
     g.job_progress[retrain_job_id] = {"epoch": 2, "total": 10}
 
@@ -68,7 +68,7 @@ def test_retrain_progress_api(client, retrain_job_id):
 
 def test_retrain_metrics_api(client, retrain_job_id):
     """[GET] /retrain_metrics - valid & invalid cases"""
-    from training import globals as g
+    
     g.job_status[retrain_job_id] = "completed"
     g.job_metrics[retrain_job_id] = {"accuracy": 0.98, "loss": 0.05}
 
@@ -82,7 +82,7 @@ def test_retrain_metrics_api(client, retrain_job_id):
 
 def test_download_model_api(client, retrain_job_id):
     """[GET] /download_model - valid & invalid cases"""
-    from training import globals as g
+    
     g.job_status[retrain_job_id] = "completed"
     model_path = f"/tmp/model_{retrain_job_id}.zip"
     with open(model_path, "wb") as f:
@@ -103,7 +103,7 @@ def test_latest_job_id_api(client, retrain_job_id):
     assert valid.status_code == 200
     assert valid.json()["job_id"] == retrain_job_id
 
-    from training import globals as g
+    
     backup = g.job_status.copy()
     g.job_status.clear()
 
@@ -119,7 +119,7 @@ def test_full_retrain_lifecycle(client, test_settings_dict):
     assert response.status_code == 200
     job_id = response.json()["job_id"]
 
-    from training import globals as g
+    
     g.job_status[job_id] = "running"
     g.job_progress[job_id] = {"epoch": 3, "total": 10}
 

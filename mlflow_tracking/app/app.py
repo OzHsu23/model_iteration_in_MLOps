@@ -7,13 +7,21 @@ from fastapi.responses import FileResponse
 from pydantic import ValidationError
 from typing import Optional
 
+
+
 from app.schemas import TrainSettings
 from app.app_utils import (
     load_job_status, save_job_status,
     run_config_retrain, run_zip_retrain
 )
 
-from training.globals import job_status, job_progress, job_model_paths, job_metrics
+from app.globals import (
+    job_status,
+    job_progress,
+    job_model_paths,
+    job_metrics,
+    PACKAGE_DIR
+)
 
 app = FastAPI()
 
@@ -30,7 +38,7 @@ async def start_retrain(request: Request, background_tasks: BackgroundTasks, zip
     try:
         if zip_file:
             # Handle retrain from ZIP file
-            zip_path = f"/tmp/{job_id}.zip"
+            zip_path = f"{PACKAGE_DIR}/{job_id}.zip"
             with open(zip_path, "wb") as f:
                 f.write(await zip_file.read())
             background_tasks.add_task(run_zip_retrain, zip_path, job_id)

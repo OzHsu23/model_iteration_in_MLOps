@@ -1,5 +1,3 @@
-# dags/schemas.py
-
 from pathlib import Path
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, field_validator
@@ -39,7 +37,6 @@ class ProductionLineConfig(BaseModel):
         return v
 
 
-
 # ==========================
 # Monitor Accuracy Settings
 # ==========================
@@ -75,6 +72,9 @@ class MonitorYieldConfig(BaseModel):
         if v < 0:
             raise ValueError("monitor_delay_sec must be non-negative")
         return v
+    
+    # Post-deployment yield check settings
+    post_deploy_check: Optional[dict] = None
 
 
 # ==========================
@@ -146,14 +146,47 @@ class RetrainConfig(BaseModel):
         return v
 
 
+
+# ==========================
+# Evaluate Before Deploy Settings
+# ==========================
+class EvaluateBeforeDeployConfig(BaseModel):
+    image_dir_or_zip: str
+    eval_inference_api: str
+    metric: str = "accuracy"
+    min_improvement: float = 0.01
+    old_model_api: str
+    new_model_api: str
+    result_flag_path: str = "resources/flags/evaluate_result.json"
+
+
+    model_config = ConfigDict(extra="forbid")
+
+    @field_validator("eval_inference_api", "old_model_api", "new_model_api")
+    @classmethod
+    def check_urls(cls, v, info):
+        if not (v.startswith("http://") or v.startswith("https://")):
+            raise ValueError(f"{info.field_name} must be a valid HTTP or HTTPS URL")
+        return v
+
+    @field_validator("min_improvement")
+    @classmethod
+    def check_range_0_1(cls, v):
+        if not (0.0 <= v <= 1.0):
+            raise ValueError("min_improvement must be between 0.0 and 1.0")
+        return v
+
 # ==========================
 # Deploy Settings
 # ==========================
 class DeployConfig(BaseModel):
     inference_server_api: str
     job_id_to_deploy: str = ""
-
     model_config = ConfigDict(extra="forbid")
+
+
+
+
 
 
 # ==========================
@@ -165,5 +198,6 @@ class FullConfig(BaseModel):
     prepare_training_data: PrepareTrainingDataConfig
     retrain: RetrainConfig
     deploy: DeployConfig
+    evaluate_before_deploy: EvaluateBeforeDeployConfig
 
     model_config = ConfigDict(extra="forbid")
