@@ -22,7 +22,7 @@ mlruns/
 logs/
 resources/
 weights/
-*.pid
+airflow-webserver.pid
 
 # Dev files
 cmd.txt
