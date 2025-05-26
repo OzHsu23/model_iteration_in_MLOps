@@ -70,7 +70,32 @@
     "981f1498-1f9c-498a-8967-020e4f1663bd": "completed",
     "d1c78915-0291-49a1-8327-7b38844ee1a4": "completed",
     "02b62ea0-dffd-4a32-a5af-ca5a5c95c199": "failed",
-    "ccbe5f70-c934-4e0c-b032-4eacf41ebd56": "completed"
+    "ccbe5f70-c934-4e0c-b032-4eacf41ebd56": "completed",
+    "0f789734-09c9-46b9-bafd-af3b771d196a": "failed",
+    "9bae9ab0-2890-4c98-86b4-2d2e3cc1f672": "failed",
+    "4ed4ea34-af94-4a8e-94db-1362c0294b9f": "running",
+    "06dc38c6-90a3-4c32-9c13-98a86badd774": "running",
+    "5e7646c1-3296-4169-84b6-5129eb01cbdd": "completed",
+    "d74abece-4012-4b30-967c-bd3415863619": "completed",
+    "fb6eca6a-8028-4039-84d4-a7c08a360403": "failed",
+    "dfa9930a-e6da-410a-ba1a-ecfd11712b79": "completed",
+    "237627bc-6abc-49c5-8871-8456054b4d9a": "failed",
+    "628c2be6-afef-4bfe-b887-e223168da38a": "failed",
+    "b8cfdc2c-1d99-468a-9807-d5abe4042e98": "running",
+    "b2563177-6263-4ee5-96b6-9a8b0843d131": "running",
+    "19f7f915-d349-4893-8f47-15709f177631": "completed",
+    "9d8981ec-ec98-41e3-9948-985d86bb9421": "completed",
+    "c28d130e-76e5-4113-bb65-69b27d1f448a": "failed",
+    "8185aded-198f-4051-84e4-e4ba0172ca29": "completed",
+    "9d2e2d8a-cce5-47d4-80ea-ace8788049a3": "failed",
+    "1f92184a-13cb-453d-a014-f2ecf989edb5": "failed",
+    "a1eec05a-32d4-4f0a-b6a5-2ba70b19e977": "running",
+    "33890908-24ed-4baa-b3c2-ed0808658bfc": "running",
+    "aba860e7-ef81-4465-8760-eaf411f7effa": "completed",
+    "22413e1b-903c-412a-8fa9-f85b4b196b95": "completed",
+    "87dc6ebb-8a57-4653-bcb8-b4ed84be41ec": "failed",
+    "8938985a-8346-48d2-9ca2-6fead77911a8": "completed",
+    "ab3d2843-1782-44fb-ac5d-981508d6c0e4": "completed"
   },
   "job_metrics": {
     "7550fbcd-1c01-4692-862e-1c53672afcab": {
@@ -382,6 +407,93 @@
     "ccbe5f70-c934-4e0c-b032-4eacf41ebd56": {
       "accuracy": 0.99,
       "loss": 0.01
+    },
+    "0f789734-09c9-46b9-bafd-af3b771d196a": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "9bae9ab0-2890-4c98-86b4-2d2e3cc1f672": {
+      "error": "[Errno 2] No such file or directory: '/root/model_iteration_in_MLOps/mlflow_tracking/job_9bae9ab0-2890-4c98-86b4-2d2e3cc1f672/setting.json'"
+    },
+    "4ed4ea34-af94-4a8e-94db-1362c0294b9f": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "06dc38c6-90a3-4c32-9c13-98a86badd774": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "5e7646c1-3296-4169-84b6-5129eb01cbdd": {
+      "accuracy": 0.98,
+      "loss": 0.05
+    },
+    "d74abece-4012-4b30-967c-bd3415863619": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "fb6eca6a-8028-4039-84d4-a7c08a360403": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "dfa9930a-e6da-410a-ba1a-ecfd11712b79": {
+      "accuracy": 0.99,
+      "loss": 0.01
+    },
+    "237627bc-6abc-49c5-8871-8456054b4d9a": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "628c2be6-afef-4bfe-b887-e223168da38a": {
+      "error": "[Errno 2] No such file or directory: '/root/model_iteration_in_MLOps/mlflow_tracking/job_628c2be6-afef-4bfe-b887-e223168da38a/setting.json'"
+    },
+    "b8cfdc2c-1d99-468a-9807-d5abe4042e98": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "b2563177-6263-4ee5-96b6-9a8b0843d131": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "19f7f915-d349-4893-8f47-15709f177631": {
+      "accuracy": 0.98,
+      "loss": 0.05
+    },
+    "9d8981ec-ec98-41e3-9948-985d86bb9421": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "c28d130e-76e5-4113-bb65-69b27d1f448a": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "8185aded-198f-4051-84e4-e4ba0172ca29": {
+      "accuracy": 0.99,
+      "loss": 0.01
+    },
+    "9d2e2d8a-cce5-47d4-80ea-ace8788049a3": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "1f92184a-13cb-453d-a014-f2ecf989edb5": {
+      "error": "[Errno 2] No such file or directory: '/root/model_iteration_in_MLOps/mlflow_tracking/job_1f92184a-13cb-453d-a014-f2ecf989edb5/setting.json'"
+    },
+    "a1eec05a-32d4-4f0a-b6a5-2ba70b19e977": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "33890908-24ed-4baa-b3c2-ed0808658bfc": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "aba860e7-ef81-4465-8760-eaf411f7effa": {
+      "accuracy": 0.98,
+      "loss": 0.05
+    },
+    "22413e1b-903c-412a-8fa9-f85b4b196b95": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "87dc6ebb-8a57-4653-bcb8-b4ed84be41ec": {
+      "error": "Data directory '/data/test_classification/carpet' does not exist."
+    },
+    "8938985a-8346-48d2-9ca2-6fead77911a8": {
+      "accuracy": 0.99,
+      "loss": 0.01
+    },
+    "ab3d2843-1782-44fb-ac5d-981508d6c0e4": {
+      "current_epoch": 5,
+      "total_epoch": 5,
+      "train_loss": 0.44338639293398174,
+      "val_loss": 0.31332147121429443,
+      "train_accuracy": 0.8571428571428571,
+      "val_accuracy": 1.0,
+      "finished": true
     }
   },
   "job_model_paths": {
@@ -406,7 +518,14 @@
     "d46cfe14-aac0-4932-ac5a-bdec8c297000": "/root/model_iteration_in_MLOps/mlflow_tracking/d46cfe14-aac0-4932-ac5a-bdec8c297000.zip",
     "fa1a7096-cccf-4f8f-a196-b518ac8c581d": "/root/model_iteration_in_MLOps/mlflow_tracking/fa1a7096-cccf-4f8f-a196-b518ac8c581d.zip",
     "d1c78915-0291-49a1-8327-7b38844ee1a4": "/tmp/model_d1c78915-0291-49a1-8327-7b38844ee1a4.zip",
-    "ccbe5f70-c934-4e0c-b032-4eacf41ebd56": "/tmp/model_ccbe5f70-c934-4e0c-b032-4eacf41ebd56.zip"
+    "ccbe5f70-c934-4e0c-b032-4eacf41ebd56": "/tmp/model_ccbe5f70-c934-4e0c-b032-4eacf41ebd56.zip",
+    "d74abece-4012-4b30-967c-bd3415863619": "/tmp/model_d74abece-4012-4b30-967c-bd3415863619.zip",
+    "dfa9930a-e6da-410a-ba1a-ecfd11712b79": "/tmp/model_dfa9930a-e6da-410a-ba1a-ecfd11712b79.zip",
+    "9d8981ec-ec98-41e3-9948-985d86bb9421": "/tmp/model_9d8981ec-ec98-41e3-9948-985d86bb9421.zip",
+    "8185aded-198f-4051-84e4-e4ba0172ca29": "/tmp/model_8185aded-198f-4051-84e4-e4ba0172ca29.zip",
+    "22413e1b-903c-412a-8fa9-f85b4b196b95": "/tmp/model_22413e1b-903c-412a-8fa9-f85b4b196b95.zip",
+    "8938985a-8346-48d2-9ca2-6fead77911a8": "/tmp/model_8938985a-8346-48d2-9ca2-6fead77911a8.zip",
+    "ab3d2843-1782-44fb-ac5d-981508d6c0e4": "/root/model_iteration_in_MLOps/mlflow_tracking/ab3d2843-1782-44fb-ac5d-981508d6c0e4.zip"
   },
   "job_progress": {
     "7550fbcd-1c01-4692-862e-1c53672afcab": {
@@ -580,6 +699,39 @@
     "ccbe5f70-c934-4e0c-b032-4eacf41ebd56": {
       "epoch": 3,
       "total": 10
+    },
+    "06dc38c6-90a3-4c32-9c13-98a86badd774": {
+      "epoch": 2,
+      "total": 10
+    },
+    "dfa9930a-e6da-410a-ba1a-ecfd11712b79": {
+      "epoch": 3,
+      "total": 10
+    },
+    "b2563177-6263-4ee5-96b6-9a8b0843d131": {
+      "epoch": 2,
+      "total": 10
+    },
+    "8185aded-198f-4051-84e4-e4ba0172ca29": {
+      "epoch": 3,
+      "total": 10
+    },
+    "33890908-24ed-4baa-b3c2-ed0808658bfc": {
+      "epoch": 2,
+      "total": 10
+    },
+    "8938985a-8346-48d2-9ca2-6fead77911a8": {
+      "epoch": 3,
+      "total": 10
+    },
+    "ab3d2843-1782-44fb-ac5d-981508d6c0e4": {
+      "current_epoch": 5,
+      "total_epoch": 5,
+      "train_loss": 0.44338639293398174,
+      "val_loss": 0.31332147121429443,
+      "train_accuracy": 0.8571428571428571,
+      "val_accuracy": 1.0,
+      "finished": true
     }
   }
 }

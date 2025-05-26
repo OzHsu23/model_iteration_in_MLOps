@@ -1,7 +1,6 @@
 # dags/scripts/check_yield.py
 
 import os
-import json
 import warnings
 import pandas as pd
 from schemas import FullConfig, MonitorYieldConfig

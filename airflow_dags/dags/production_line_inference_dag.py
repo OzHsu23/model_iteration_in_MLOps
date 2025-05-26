@@ -8,9 +8,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.models.param import Param
 from datetime import datetime, timedelta
-import json
 
-from schemas import FullConfig
 from scripts.run_simulated_inference import run_simulated_inference
 from dags.globals import DEFAULT_MONITORING_CONFIG
 

@@ -100,13 +100,12 @@ class MLflowManager:
         """Log a PyTorch model's state_dict to MLflow with optional input example and environment info."""
 
         # Infer model signature (optional, for input/output schema)
-        signature = None
         if input_example is not None:
             input_tensor = torch.from_numpy(input_example).float().to(model.device)
             with torch.no_grad():
                 model.eval()
                 output = model(input_tensor)
-            signature = infer_signature(input_tensor.cpu().numpy(), output.detach().cpu().numpy())
+                print(f"Model output shape: {output.shape}")
 
         # Prepare pip requirements
         pip_requirements = [

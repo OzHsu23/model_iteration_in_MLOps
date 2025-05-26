@@ -3,12 +3,10 @@
 import io
 import os
 import json
-import yaml
 import shutil
 import zipfile
 import tempfile
 import pandas as pd
-from PIL import Image
 from uuid import uuid4
 from datetime import datetime
 from typing import Optional, Tuple, List
@@ -159,58 +157,69 @@ def export_current_model_zip() -> str:
 
 # ---------- Evaluate a given model on a test set ----------
 def evaluate_model_zip(model_zip_path: str, image_path: str, metric: str) -> float:
-    # Unzip model package
+    """
+    Evaluate a model packaged in a zip file on a test set.
+    """
+    model_dir = prepare_model_dir(model_zip_path)
+    settings = load_model_settings(model_dir)
+    model_wrapper = ModelFactory.create_model(settings)
+
+    image_dir = extract_images_if_zip(image_path)
+    df = load_and_validate_csv(image_dir)
+
+    if metric == "accuracy":
+        return compute_accuracy(model_wrapper, df, image_dir)
+    else:
+        raise RuntimeError(f"Unsupported metric: {metric}, only 'accuracy' is supported.")
+
+def prepare_model_dir(zip_path: str) -> str:
     model_dir = os.path.join(PACKAGE_DIR, "model")
     if os.path.exists(model_dir):
         shutil.rmtree(model_dir)
     os.makedirs(model_dir, exist_ok=True)
 
-    with zipfile.ZipFile(model_zip_path, 'r') as zip_ref:
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(model_dir)
+    return model_dir
 
-    # Load model settings
+def load_model_settings(model_dir: str):
     setting_path = os.path.join(model_dir, "inference_setting.json")
     if not os.path.exists(setting_path):
         raise RuntimeError("Missing inference_setting.json in model package")
-
     settings_dict = load_setting_json(setting_path)
-    settings = AppSettings(**settings_dict)
-    model_wrapper = ModelFactory.create_model(settings)
+    return AppSettings(**settings_dict)
 
-    # Handle image input (zip or folder)
+def extract_images_if_zip(image_path: str) -> str:
     if zipfile.is_zipfile(image_path):
         extract_dir = tempfile.mkdtemp(prefix="eval_images_")
         with zipfile.ZipFile(image_path, "r") as zip_ref:
             zip_ref.extractall(extract_dir)
-        image_path = extract_dir
+        return extract_dir
+    return image_path
 
-    # Load test.csv
-    csv_path = os.path.join(image_path, "test.csv")
+def load_and_validate_csv(image_dir: str) -> pd.DataFrame:
+    csv_path = os.path.join(image_dir, "test.csv")
     if not os.path.exists(csv_path):
-        raise RuntimeError(f"Missing test.csv under {image_path}")
-
+        raise RuntimeError(f"Missing test.csv under {image_dir}")
     df = pd.read_csv(csv_path)
     if "filename" not in df.columns or "label" not in df.columns:
         raise RuntimeError("test.csv must contain 'filename' and 'label' columns")
+    return df
 
-    if metric == "accuracy":
-        correct = 0
-        total = 0
-        for _, row in df.iterrows():
-            img_file = os.path.join(image_path, row["filename"])
-            if not os.path.exists(img_file):
-                continue
-            with open(img_file, "rb") as f:
-                result = model_wrapper.predict(f.read())
-            print('filename:', row["filename"], 'result:', result, 'label:', row["label"])
-            if result.get("label") == str(row["label"]):
-                correct += 1
-            total += 1
-        print('correct:', correct, 'total:', total)
-        return correct / total if total > 0 else 0.0
-
-    else:
-        raise RuntimeError(f"Unsupported metric: {metric}, only 'accuracy' is supported.")
+def compute_accuracy(model_wrapper, df: pd.DataFrame, image_dir: str) -> float:
+    correct, total = 0, 0
+    for _, row in df.iterrows():
+        img_file = os.path.join(image_dir, row["filename"])
+        if not os.path.exists(img_file):
+            continue
+        with open(img_file, "rb") as f:
+            result = model_wrapper.predict(f.read())
+        print('filename:', row["filename"], 'result:', result, 'label:', row["label"])
+        if result.get("label") == str(row["label"]):
+            correct += 1
+        total += 1
+    print('correct:', correct, 'total:', total)
+    return correct / total if total > 0 else 0.0
 
 # ---------- Read deploy status ----------
 def get_current_deploy_status(request: Request) -> dict:

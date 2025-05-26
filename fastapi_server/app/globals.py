@@ -1,7 +1,6 @@
 # app/globals.py
 
 import os
-import tempfile
 from pathlib import Path
 
 # Default setting path

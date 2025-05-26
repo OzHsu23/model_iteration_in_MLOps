@@ -38,7 +38,6 @@ def load_torch_mlflow_model(model_cfg: ModelSettings):
         num_classes=model_cfg.num_classes
     )
     try:
-        model_uri = f"runs:/{model_cfg.run_id}/model"
         local_path = mlflow.artifacts.download_artifacts(run_id=model_cfg.run_id, artifact_path="model", tracking_uri=model_cfg.tracking_uri)
         # Assume weights are stored as "state_dict.pth" or similar inside the artifact
         weight_file = os.path.join(local_path, "state_dict.pth")
@@ -79,27 +78,27 @@ def load_tf_pure_model(model_cfg: ModelSettings):
 # ==========================
 
 def load_model_by_type(model_cfg: ModelSettings):
+    """Load model based on the specified model_type in ModelSettings."""
+    
     model_type = model_cfg.model_type
 
-    if model_type == "torch_mlflow":
-        try:
-            return load_torch_mlflow_model(model_cfg)
-        except Exception as e:
-            print(f"[Warning] MLflow load failed: {e}, fallback to local.")
-            return load_torch_pure_model(model_cfg)
+    loaders = {
+        "torch_mlflow": (load_torch_mlflow_model, load_torch_pure_model),
+        "torch_pure": (load_torch_pure_model, None),
+        "tf_mlflow": (load_tf_mlflow_model, load_tf_pure_model),
+        "tf_pure": (load_tf_pure_model, None),
+    }
 
-    elif model_type == "torch_pure":
-        return load_torch_pure_model(model_cfg)
-
-    elif model_type == "tf_mlflow":
-        try:
-            return load_tf_mlflow_model(model_cfg)
-        except Exception as e:
-            print(f"[Warning] TF MLflow load failed: {e}, fallback to local.")
-            return load_tf_pure_model(model_cfg)
-
-    elif model_type == "tf_pure":
-        return load_tf_pure_model(model_cfg)
-
-    else:
+    if model_type not in loaders:
         raise HTTPException(400, f"Unsupported model_type: {model_type}")
+
+    primary_loader, fallback_loader = loaders[model_type]
+
+    try:
+        return primary_loader(model_cfg)
+    except Exception as e:
+        if fallback_loader:
+            print(f"[Warning] {model_type} load failed: {e}, fallback to local.")
+            return fallback_loader(model_cfg)
+        else:
+            raise

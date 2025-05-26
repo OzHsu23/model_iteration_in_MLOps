@@ -5,10 +5,8 @@ import mlflow
 import numpy as np
 from torch.utils.data import DataLoader
 
-from training.utils.common import get_device
 from training.trainers.base_trainer import BaseTrainer
 from training.model_zoo.classifier_model import SimpleClassifier
-from training.utils.classification_utils import compute_accuracy
 from training.datasets.classification_dataset import ClassificationDataset
 from training.utils.preprocessing import TrainAugmentation, ValAugmentation
 from training.mlflow_utils.mlflow_manager import MLflowManager

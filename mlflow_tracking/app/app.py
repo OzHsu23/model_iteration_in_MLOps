@@ -4,12 +4,10 @@ import os
 import uuid
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks, HTTPException, Request
 from fastapi.responses import FileResponse
-from pydantic import ValidationError
 from typing import Optional
 
 
 
-from app.schemas import TrainSettings
 from app.app_utils import (
     load_job_status, save_job_status,
     run_config_retrain, run_zip_retrain

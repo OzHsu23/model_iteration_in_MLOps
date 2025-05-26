@@ -1,6 +1,5 @@
 # training/tests/test_classification_trainer.py
 
-import pytest
 import torch
 from training.trainers.classification_trainer import ClassificationTrainer
 

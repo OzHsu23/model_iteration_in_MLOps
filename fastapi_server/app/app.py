@@ -7,17 +7,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import tempfile
 import zipfile
-import argparse
-from uuid import uuid4
 from datetime import datetime
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.responses import JSONResponse, FileResponse
-from typing import Optional
 
 
 from app.app_utils import (
-    extract_images_from_folder,
-    extract_images_from_zip,
     resolve_image_inputs,
     predict_images,
     load_setting_json,

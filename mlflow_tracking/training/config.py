@@ -1,7 +1,6 @@
 # training/config.py
 
 import json
-import os
 
 class Config:
     def __init__(self, config_input):

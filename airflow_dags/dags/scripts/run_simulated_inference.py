@@ -14,7 +14,6 @@ def run_simulated_inference(config_path: str):
     if not os.path.exists(config_path):
         raise FileNotFoundError(f"Config file not found: {config_path}")
 
-    # Use FullConfig to load and validate config
     config = FullConfig.parse_file(config_path)
     production_cfg = config.production_line
 

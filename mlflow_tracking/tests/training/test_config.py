@@ -1,6 +1,4 @@
 #  training/tests/test_config.py
-import pytest
-from training.config import Config
 
 def test_config_core_values(config):
     """Verify core values loaded from real config file."""

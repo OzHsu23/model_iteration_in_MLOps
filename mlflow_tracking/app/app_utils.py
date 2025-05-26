@@ -5,7 +5,6 @@ import os
 import json
 import shutil
 import zipfile
-from datetime import datetime
 
 import mlflow
 
@@ -22,7 +21,6 @@ from app.globals import (
     job_metrics,
     job_model_paths,
     job_progress,
-    job_registry_path,
     save_job_status,
     PACKAGE_DIR
 )

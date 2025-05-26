@@ -10,9 +10,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.exceptions import AirflowSkipException
 from airflow.models.param import Param
-from airflow.sensors.time_delta import TimeDeltaSensor
 
 
 from dags.globals import DEFAULT_MONITORING_CONFIG
